@@ -1,0 +1,7 @@
+\.*
+
+# dont igonre
+!\.gitignore
+
+!\.env.template
+
