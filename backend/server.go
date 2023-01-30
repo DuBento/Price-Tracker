@@ -1,15 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-)
 
-var db *sql.DB
+	"server/db"
+	"server/routes"
+)
 
 func main() {
 	var err error
@@ -18,20 +18,15 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	datasource := os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASSWORD") +
-		"@tcp(127.0.0.1:3306)/" + os.Getenv("DB_NAME")
+	db.Connect(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 
-	// Get a database handle.
-	db, err = sql.Open("mysql", datasource)
-	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error pinging database: %v", err)
-	}
-
-	log.Println("DB connected!")
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	routes.Routes(r)
+	r.Run() // listen and serve on 0.0.0.0:8080
 
 }
