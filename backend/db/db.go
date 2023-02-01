@@ -27,6 +27,8 @@ func Connect(user, password, name string) {
 
 	log.Println("DB connected!")
 
+	DBInit()
+
 }
 
 func GetRecords() {
